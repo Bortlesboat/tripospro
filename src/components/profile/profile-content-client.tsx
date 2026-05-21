@@ -3,6 +3,7 @@
 import type { inferRouterOutputs } from "@trpc/server";
 import {
   BookOpen,
+  Building2,
   ExternalLink,
   GraduationCap,
   MessageSquare,
@@ -117,6 +118,12 @@ const TopSection = ({
       </div>
       <span className="font-mono text-muted-foreground text-sm">{crsid}</span>
       <div className="flex items-center gap-1.5">
+        {profile.college && (
+          <Badge variant="outline" className="gap-1">
+            <Building2 className="h-3 w-3" />
+            {profile.college}
+          </Badge>
+        )}
         {profile.isLecturer && (
           <Badge variant="secondary" className="gap-1">
             <GraduationCap className="h-3 w-3" />

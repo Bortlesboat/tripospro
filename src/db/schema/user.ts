@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import {
   boolean,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -21,6 +22,12 @@ export const usersTable = pgTable("users", {
   picture: varchar({ length: 255 }),
   karma: integer().notNull().default(0),
   clerkId: varchar({ length: 255 }).unique(),
+  college: varchar({ length: 255 }),
+  lookupData: jsonb().$type<{
+    groups: { id: string; name: string; title: string }[];
+    institutions: { id: string; name: string; acronym?: string }[];
+    lastFetched: string;
+  }>(),
 
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow()

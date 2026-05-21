@@ -9,7 +9,9 @@ export const env = createEnv({
     CLERK_SIGNING_SECRET: z.string(),
     OPENAI_API_KEY: z.string(),
     PINECONE_API_KEY: z.string(),
-    PINECONE_HOST: z.string()
+    PINECONE_HOST: z.string(),
+    CAMBRIDGE_LOOKUP_API_KEY: z.string(),
+    CAMBRIDGE_LOOKUP_API_SECRET: z.string()
   },
 
   client: {
@@ -41,6 +43,8 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     PINECONE_API_KEY: process.env.PINECONE_API_KEY,
-    PINECONE_HOST: process.env.PINECONE_HOST
+    PINECONE_HOST: process.env.PINECONE_HOST,
+    CAMBRIDGE_LOOKUP_API_KEY: process.env.CAMBRIDGE_LOOKUP_API_KEY,
+    CAMBRIDGE_LOOKUP_API_SECRET: process.env.CAMBRIDGE_LOOKUP_API_SECRET
   }
 });

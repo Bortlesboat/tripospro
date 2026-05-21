@@ -43,6 +43,13 @@
       "when": 1779100891558,
       "tag": "0005_good_shotgun",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1779389849840,
+      "tag": "0006_outstanding_blackheart",
+      "breakpoints": true
     }
   ]
 }
