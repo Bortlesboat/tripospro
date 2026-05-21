@@ -15,6 +15,7 @@ import {
   userSettingsTable,
   usersTable
 } from "@/db/schema/user";
+import { TRPCError } from "@trpc/server";
 import { baseProcedure, createTRPCRouter, protectedProcedure } from "../init";
 
 const filterClerkUser = (clerkUser: User) => {
@@ -104,6 +105,11 @@ export const userRouter = createTRPCRouter({
         where: eq(usersTable.crsid, input.crsid)
       });
       if (!user) throw new Error("User not found");
+
+      const userSettings = await db.query.userSettingsTable.findFirst({
+        where: eq(userSettingsTable.userId, user.id),
+        with: { triposPart: true }
+      });
 
       const [
         clerkUser,
@@ -213,10 +219,20 @@ export const userRouter = createTRPCRouter({
       const [answersCount] = answersCountResult;
       const [commentsCount] = commentsCountResult;
 
+      const isLecturer = coursesLectured.length > 0;
+
+      if (!isLecturer && !ctx.userId) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Sign in to view student profiles"
+        });
+      }
+
       return {
         ...user,
         clerkUser: clerkUser ? filterClerkUser(clerkUser) : null,
-        isLecturer: coursesLectured.length > 0,
+        isLecturer,
+        triposPart: userSettings?.triposPart ?? null,
         coursesLectured,
         questionsAuthored,
         totalAnswers: answersCount?.count ?? 0,

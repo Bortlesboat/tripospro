@@ -1,5 +1,6 @@
 "use client";
 
+import { SignInButton, useUser } from "@clerk/nextjs";
 import type { inferRouterOutputs } from "@trpc/server";
 import {
   BookOpen,
@@ -8,6 +9,7 @@ import {
   GraduationCap,
   MessageSquare,
   PenTool,
+  School,
   Star
 } from "lucide-react";
 import Image from "next/image";
@@ -19,6 +21,7 @@ import type { AppRouter } from "@/trpc/routers/_app";
 import { CommentContent } from "../comment/comment-content";
 import { ErrorMessage } from "../error";
 import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Separator } from "../ui/separator";
 import { Skeleton } from "../ui/skeleton";
@@ -26,18 +29,35 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 export const ProfileContentClient = ({ crsid }: { crsid: string }) => {
   return (
-    <ErrorBoundary
-      fallback={
-        <ErrorMessage
-          title="Failed to load profile"
-          description="Could not load user profile."
-        />
-      }
-    >
+    <ErrorBoundary fallback={<ProfileAuthFallback />}>
       <Suspense fallback={<ProfileSkeleton />}>
         <ProfileInner crsid={crsid} />
       </Suspense>
     </ErrorBoundary>
+  );
+};
+
+const ProfileAuthFallback = () => {
+  const { isSignedIn } = useUser();
+
+  if (!isSignedIn) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-4">
+        <p className="text-muted-foreground">
+          Sign in to view student profiles.
+        </p>
+        <Button asChild variant="secondary">
+          <SignInButton mode="modal" />
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <ErrorMessage
+      title="Failed to load profile"
+      description="Could not load user profile."
+    />
   );
 };
 
@@ -117,11 +137,17 @@ const TopSection = ({
         </h2>
       </div>
       <span className="font-mono text-muted-foreground text-sm">{crsid}</span>
-      <div className="flex items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
         {profile.college && (
           <Badge variant="outline" className="gap-1">
             <Building2 className="h-3 w-3" />
             {profile.college}
+          </Badge>
+        )}
+        {profile.triposPart && (
+          <Badge variant="outline" className="gap-1">
+            <School className="h-3 w-3" />
+            {profile.triposPart.name}
           </Badge>
         )}
         {profile.isLecturer && (
