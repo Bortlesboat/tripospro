@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
 import { ChevronsUpDown } from "lucide-react";
 import { Suspense, useEffect } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -72,14 +71,8 @@ function PartSwitcherSkeleton() {
 
 function InnerPartSwitcher() {
   const { isMobile } = useSidebar();
-  const { isSignedIn } = useAuth();
   const [part, setPart] = usePart();
   const [parts] = trpc.tripos.getTriposParts.useSuspenseQuery();
-  const { data: userSettings, isFetched: settingsFetched } =
-    trpc.user.getUserSettings.useQuery(undefined, {
-      enabled: !!isSignedIn,
-      retry: false
-    });
 
   const sortedParts = parts?.sort((a, b) => a.code.localeCompare(b.code)) ?? [];
   const defaultPart = sortedParts.find((p) => p.code === defaultPartCode);
@@ -88,26 +81,15 @@ function InnerPartSwitcher() {
   const activePart = sortedParts.find((p) => p.code === part);
 
   useEffect(() => {
-    if (part) return;
-    if (isSignedIn && !settingsFetched) return;
-
-    const localPart = localStorage.getItem("part");
-    if (localPart && sortedParts.some((p) => p.code === localPart)) {
-      setPart(localPart);
-    } else if (userSettings?.triposPartId) {
-      const dbPart = sortedParts.find(
-        (p) => p.id === userSettings.triposPartId
-      );
-      if (dbPart) {
-        setPart(dbPart.code);
-        localStorage.setItem("part", dbPart.code);
+    if (!part) {
+      const localPart = localStorage.getItem("part");
+      if (localPart && sortedParts.some((p) => p.code === localPart)) {
+        setPart(localPart);
       } else {
         setPart(defaultPartCode);
       }
-    } else {
-      setPart(defaultPartCode);
     }
-  }, [part, parts, isSignedIn, settingsFetched, userSettings]);
+  }, [part, parts]);
 
   const changePart = (part: string) => {
     setPart(part);

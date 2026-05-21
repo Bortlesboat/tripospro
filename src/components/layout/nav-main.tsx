@@ -6,7 +6,8 @@ import {
   Info,
   type LucideIcon,
   ScrollText,
-  Sparkles
+  Sparkles,
+  Trophy
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import {
@@ -41,6 +42,11 @@ const navMain: NavMainItem[] = [
     url: "/questions",
     icon: ScrollText,
     activePatterns: ["/questions", "/p/"]
+  },
+  {
+    title: "Leaderboard",
+    url: "/leaderboard",
+    icon: Trophy
   },
   {
     title: "RAG Bot",

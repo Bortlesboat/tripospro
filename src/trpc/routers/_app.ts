@@ -2,6 +2,7 @@ import { createTRPCRouter } from "../init";
 import { chatRouter } from "./chat";
 import { commentRouter } from "./comment";
 import { courseRouter } from "./course";
+import { leaderboardRouter } from "./leaderboard";
 import { questionRouter } from "./question";
 import { searchRouter } from "./search";
 import { triposRouter } from "./tripos";
@@ -16,7 +17,8 @@ export const appRouter = createTRPCRouter({
   question: questionRouter,
   triposPart: triposPartRouter,
   course: courseRouter,
-  search: searchRouter
+  search: searchRouter,
+  leaderboard: leaderboardRouter
 });
 
 export type AppRouter = typeof appRouter;

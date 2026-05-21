@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { X, Sparkles } from "lucide-react";
 
-const CURRENT_VERSION = "2";
+const CURRENT_VERSION = "3";
 const STORAGE_KEY = "tripospro-patch-notes-seen";
 
 export function PatchNotesToast() {
@@ -39,7 +39,7 @@ export function PatchNotesToast() {
         <div className="flex-1 space-y-1">
           <p className="font-medium text-sm">What&apos;s New</p>
           <p className="text-muted-foreground text-xs leading-relaxed">
-            Topics, similar questions, discussions & more
+            Cambridge SSO, college leaderboard & auto-detected year groups
           </p>
           <button
             type="button"

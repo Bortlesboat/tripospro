@@ -2,6 +2,16 @@ import { PageLayout } from "@/components/layout/page-layout";
 
 const patches = [
   {
+    date: "21 May 2026",
+    title: "Cambridge SSO & Leaderboard",
+    items: [
+      "Sign in with Cambridge University (Microsoft Entra ID) — replaces Google OAuth",
+      "College and tripos year auto-detected from university records",
+      "Leaderboard page: colleges and year groups ranked by questions answered and comments",
+      "College and tripos part badges shown on user profiles",
+    ]
+  },
+  {
     date: "20 May 2026",
     title: "MCP Server",
     items: [
