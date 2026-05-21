@@ -236,7 +236,6 @@ export const userRouter = createTRPCRouter({
           g.name === "cl-sis-ug"
       );
       const hasClGroups = groups.some((g) => g.name.startsWith("cl-"));
-      const isFormerFaculty = isLecturer && !hasClGroups;
       const isAlumni =
         !isLecturer &&
         !hasClGroups &&
@@ -255,7 +254,6 @@ export const userRouter = createTRPCRouter({
         isLecturer,
         isCst,
         isAlumni,
-        isFormerFaculty,
         triposPart: userSettings?.triposPart ?? null,
         coursesLectured,
         questionsAuthored,

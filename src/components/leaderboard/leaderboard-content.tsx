@@ -1,12 +1,18 @@
 "use client";
 
-import { Building2, MessageSquare, PenTool, School } from "lucide-react";
+import { Building2, Info, MessageSquare, School } from "lucide-react";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { trpc } from "@/trpc/client";
 import { ErrorMessage } from "../error";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "../ui/tooltip";
 
 export function LeaderboardContent() {
   return (
@@ -65,6 +71,7 @@ function LeaderboardInner() {
       <LeaderboardCard
         title="Questions by Year"
         icon={<School className="h-4 w-4" />}
+        tooltip="Only counts answers to questions in a user's own tripos part"
         entries={partByAnswers.map((r) => ({
           label: r.partName,
           value: r.total
@@ -78,11 +85,13 @@ function LeaderboardInner() {
 function LeaderboardCard({
   title,
   icon,
+  tooltip,
   entries,
   unit
 }: {
   title: string;
   icon: React.ReactNode;
+  tooltip?: string;
   entries: { label: string; value: number }[];
   unit: string;
 }) {
@@ -94,6 +103,18 @@ function LeaderboardCard({
         <CardTitle className="flex items-center gap-2 text-sm">
           {icon}
           {title}
+          {tooltip && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">{tooltip}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent>

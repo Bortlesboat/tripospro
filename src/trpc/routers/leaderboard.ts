@@ -1,7 +1,9 @@
 import { count, eq, isNotNull, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { commentTable } from "@/db/schema/comment";
-import { triposPartTable } from "@/db/schema/tripos";
+import { paperYearTable } from "@/db/schema/paper";
+import { questionTable } from "@/db/schema/question";
+import { triposPartTable, triposPartYearTable } from "@/db/schema/tripos";
 import { userQuestionAnswerTable, userSettingsTable, usersTable } from "@/db/schema/user";
 import { baseProcedure, createTRPCRouter } from "../init";
 
@@ -50,6 +52,16 @@ export const leaderboardRouter = createTRPCRouter({
         triposPartTable,
         eq(userSettingsTable.triposPartId, triposPartTable.id)
       )
+      .innerJoin(
+        questionTable,
+        eq(userQuestionAnswerTable.questionId, questionTable.id)
+      )
+      .innerJoin(paperYearTable, eq(questionTable.paperYearId, paperYearTable.id))
+      .innerJoin(
+        triposPartYearTable,
+        eq(paperYearTable.triposPartYearId, triposPartYearTable.id)
+      )
+      .where(eq(userSettingsTable.triposPartId, triposPartYearTable.triposPartId))
       .groupBy(triposPartTable.name, triposPartTable.code)
       .orderBy(sql`count(${userQuestionAnswerTable.id}) desc`);
 

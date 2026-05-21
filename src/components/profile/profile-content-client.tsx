@@ -144,11 +144,6 @@ const TopSection = ({
             CST
           </Badge>
         )}
-        {profile.isFormerFaculty && (
-          <Badge variant="outline" className="gap-1">
-            Former Faculty
-          </Badge>
-        )}
         {profile.isAlumni && (
           <Badge variant="outline" className="gap-1">
             Alumni
