@@ -1,5 +1,5 @@
 import type { User } from "@clerk/nextjs/server";
-import { count, desc, eq } from "drizzle-orm";
+import { count, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { commentTable } from "@/db/schema/comment";
@@ -264,5 +264,31 @@ export const userRouter = createTRPCRouter({
           content: c.isDeleted ? "[deleted]" : c.content
         }))
       };
+    }),
+
+  getActivityGraph: baseProcedure
+    .input(z.object({ crsid: z.string() }))
+    .query(async ({ input }) => {
+      const user = await db.query.usersTable.findFirst({
+        where: eq(usersTable.crsid, input.crsid)
+      });
+      if (!user) return [];
+
+      const results = await db
+        .select({
+          day: sql<string>`DATE(${userQuestionAnswerTable.createdAt})`.as(
+            "day"
+          ),
+          count: count(userQuestionAnswerTable.id)
+        })
+        .from(userQuestionAnswerTable)
+        .where(eq(userQuestionAnswerTable.userId, user.id))
+        .groupBy(sql`DATE(${userQuestionAnswerTable.createdAt})`)
+        .orderBy(sql`DATE(${userQuestionAnswerTable.createdAt})`);
+
+      return results.map((r) => ({
+        date: r.day,
+        count: r.count
+      }));
     })
 });

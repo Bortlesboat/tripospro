@@ -18,6 +18,7 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { trpc } from "@/trpc/client";
 import type { AppRouter } from "@/trpc/routers/_app";
+import { ActivityGraph } from "./activity-graph";
 import { CommentContent } from "../comment/comment-content";
 import { ErrorMessage } from "../error";
 import { Badge } from "../ui/badge";
@@ -87,6 +88,7 @@ const ProfileInner = ({ crsid }: { crsid: string }) => {
     <div className="flex h-full w-full flex-col gap-6">
       <TopSection profile={profile} crsid={crsid} />
       <StatsRow profile={profile} />
+      <ActivityGraph crsid={crsid} />
 
       {profile.isLecturer && (
         <>
