@@ -65,10 +65,10 @@ export function ActivityGraph({ crsid }: { crsid: string }) {
           <TooltipProvider delayDuration={0}>
             <div className="inline-grid grid-flow-col grid-rows-7 gap-[3px]">
               {weeks.flat().map((day, i) => {
-                const count = day ? activityMap.get(day) ?? 0 : 0;
                 if (!day) {
-                  return <div key={`empty-${i}`} className="h-[11px] w-[11px]" />;
+                  return <div key={`empty-${i}`} className="h-[11px] w-[11px] bg-transparent" />;
                 }
+                const count = activityMap.get(day) ?? 0;
                 return (
                   <Tooltip key={day}>
                     <TooltipTrigger asChild>
@@ -106,35 +106,32 @@ export function ActivityGraph({ crsid }: { crsid: string }) {
 }
 
 function buildWeeks(year: number): (string | null)[][] {
+  const today = new Date();
   const start = new Date(year, 0, 1);
-  const end = year === new Date().getFullYear() ? new Date() : new Date(year, 11, 31);
+  const end =
+    year === today.getFullYear() ? today : new Date(year, 11, 31);
 
-  const startDay = start.getDay();
   const weeks: (string | null)[][] = [];
-  let currentWeek: (string | null)[] = [];
 
-  for (let i = 0; i < startDay; i++) {
-    currentWeek.push(null);
-  }
+  // Find the Sunday on or before Jan 1
+  const firstSunday = new Date(start);
+  firstSunday.setDate(firstSunday.getDate() - firstSunday.getDay());
 
-  const cursor = new Date(start);
+  const cursor = new Date(firstSunday);
   while (cursor <= end) {
-    const dateStr = cursor.toISOString().split("T")[0];
-    currentWeek.push(dateStr);
-
-    if (currentWeek.length === 7) {
-      weeks.push(currentWeek);
-      currentWeek = [];
+    const week: (string | null)[] = [];
+    for (let d = 0; d < 7; d++) {
+      if (cursor >= start && cursor <= end) {
+        const y = cursor.getFullYear();
+        const m = String(cursor.getMonth() + 1).padStart(2, "0");
+        const day = String(cursor.getDate()).padStart(2, "0");
+        week.push(`${y}-${m}-${day}`);
+      } else {
+        week.push(null);
+      }
+      cursor.setDate(cursor.getDate() + 1);
     }
-
-    cursor.setDate(cursor.getDate() + 1);
-  }
-
-  if (currentWeek.length > 0) {
-    while (currentWeek.length < 7) {
-      currentWeek.push(null);
-    }
-    weeks.push(currentWeek);
+    weeks.push(week);
   }
 
   return weeks;
