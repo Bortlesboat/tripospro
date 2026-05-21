@@ -29,7 +29,12 @@ export function ActivityGraph({ crsid }: { crsid: string }) {
   }
 
   const weeks = buildWeeks(selectedYear);
-  const maxCount = Math.max(...data.map((d) => d.count), 1);
+  const maxCount = Math.max(
+    ...data
+      .filter((d) => new Date(d.date).getFullYear() === selectedYear)
+      .map((d) => d.count),
+    1
+  );
 
   return (
     <Card>
@@ -57,45 +62,42 @@ export function ActivityGraph({ crsid }: { crsid: string }) {
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
-          <div className="flex gap-[3px]">
-            <TooltipProvider delayDuration={0}>
-              {weeks.map((week, wi) => (
-                <div key={wi} className="flex flex-col gap-[3px]">
-                  {week.map((day) => {
-                    const count = day ? activityMap.get(day) ?? 0 : 0;
-                    return (
-                      <Tooltip key={day || `empty-${wi}`}>
-                        <TooltipTrigger asChild>
-                          <div
-                            className={cn(
-                              "h-[11px] w-[11px] rounded-[2px]",
-                              day ? getColor(count, maxCount) : "bg-transparent"
-                            )}
-                          />
-                        </TooltipTrigger>
-                        {day && (
-                          <TooltipContent>
-                            <p className="text-xs">
-                              {count} answer{count !== 1 ? "s" : ""} on{" "}
-                              {formatDate(day)}
-                            </p>
-                          </TooltipContent>
+          <TooltipProvider delayDuration={0}>
+            <div className="inline-grid grid-flow-col grid-rows-7 gap-[3px]">
+              {weeks.flat().map((day, i) => {
+                const count = day ? activityMap.get(day) ?? 0 : 0;
+                if (!day) {
+                  return <div key={`empty-${i}`} className="h-[11px] w-[11px]" />;
+                }
+                return (
+                  <Tooltip key={day}>
+                    <TooltipTrigger asChild>
+                      <div
+                        className={cn(
+                          "h-[11px] w-[11px] rounded-[2px]",
+                          getColor(count, maxCount)
                         )}
-                      </Tooltip>
-                    );
-                  })}
-                </div>
-              ))}
-            </TooltipProvider>
-          </div>
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">
+                        {count} answer{count !== 1 ? "s" : ""} on{" "}
+                        {formatDate(day)}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })}
+            </div>
+          </TooltipProvider>
         </div>
         <div className="mt-2 flex items-center justify-end gap-1 text-xs text-muted-foreground">
           <span>Less</span>
           <div className="h-[11px] w-[11px] rounded-[2px] bg-muted" />
-          <div className="h-[11px] w-[11px] rounded-[2px] bg-primary/20" />
-          <div className="h-[11px] w-[11px] rounded-[2px] bg-primary/40" />
-          <div className="h-[11px] w-[11px] rounded-[2px] bg-primary/70" />
-          <div className="h-[11px] w-[11px] rounded-[2px] bg-primary" />
+          <div className="h-[11px] w-[11px] rounded-[2px] bg-green-900/40" />
+          <div className="h-[11px] w-[11px] rounded-[2px] bg-green-700/60" />
+          <div className="h-[11px] w-[11px] rounded-[2px] bg-green-500/80" />
+          <div className="h-[11px] w-[11px] rounded-[2px] bg-green-400" />
           <span>More</span>
         </div>
       </CardContent>
@@ -105,8 +107,7 @@ export function ActivityGraph({ crsid }: { crsid: string }) {
 
 function buildWeeks(year: number): (string | null)[][] {
   const start = new Date(year, 0, 1);
-  const end = new Date(year, 11, 31);
-  const today = new Date();
+  const end = year === new Date().getFullYear() ? new Date() : new Date(year, 11, 31);
 
   const startDay = start.getDay();
   const weeks: (string | null)[][] = [];
@@ -117,7 +118,7 @@ function buildWeeks(year: number): (string | null)[][] {
   }
 
   const cursor = new Date(start);
-  while (cursor <= end && cursor <= today) {
+  while (cursor <= end) {
     const dateStr = cursor.toISOString().split("T")[0];
     currentWeek.push(dateStr);
 
@@ -142,10 +143,10 @@ function buildWeeks(year: number): (string | null)[][] {
 function getColor(count: number, maxCount: number): string {
   if (count === 0) return "bg-muted";
   const ratio = count / maxCount;
-  if (ratio <= 0.25) return "bg-primary/20";
-  if (ratio <= 0.5) return "bg-primary/40";
-  if (ratio <= 0.75) return "bg-primary/70";
-  return "bg-primary";
+  if (ratio <= 0.25) return "bg-green-900/40";
+  if (ratio <= 0.5) return "bg-green-700/60";
+  if (ratio <= 0.75) return "bg-green-500/80";
+  return "bg-green-400";
 }
 
 function formatDate(dateStr: string): string {
