@@ -138,6 +138,22 @@ const TopSection = ({
       </div>
       <span className="font-mono text-muted-foreground text-sm">{crsid}</span>
       <div className="flex flex-wrap items-center gap-1.5">
+        {profile.isCst && (
+          <Badge variant="secondary" className="gap-1">
+            <School className="h-3 w-3" />
+            CST
+          </Badge>
+        )}
+        {profile.isFormerFaculty && (
+          <Badge variant="outline" className="gap-1">
+            Former Faculty
+          </Badge>
+        )}
+        {profile.isAlumni && (
+          <Badge variant="outline" className="gap-1">
+            Alumni
+          </Badge>
+        )}
         {profile.college && (
           <Badge variant="outline" className="gap-1">
             <Building2 className="h-3 w-3" />
@@ -146,7 +162,6 @@ const TopSection = ({
         )}
         {profile.triposPart && (
           <Badge variant="outline" className="gap-1">
-            <School className="h-3 w-3" />
             {profile.triposPart.name}
           </Badge>
         )}

@@ -228,10 +228,34 @@ export const userRouter = createTRPCRouter({
         });
       }
 
+      const groups = user.lookupData?.groups ?? [];
+      const isCst = groups.some(
+        (g) =>
+          g.name === "cl-students-all" ||
+          g.name.startsWith("cl-part") ||
+          g.name === "cl-sis-ug"
+      );
+      const hasClGroups = groups.some((g) => g.name.startsWith("cl-"));
+      const isFormerFaculty = isLecturer && !hasClGroups;
+      const isAlumni =
+        !isLecturer &&
+        !hasClGroups &&
+        !groups.some(
+          (g) =>
+            g.name.startsWith("eng-") ||
+            g.name.startsWith("econ-") ||
+            g.name.startsWith("phil-") ||
+            g.name.startsWith("math-") ||
+            g.name.startsWith("dam-")
+        );
+
       return {
         ...user,
         clerkUser: clerkUser ? filterClerkUser(clerkUser) : null,
         isLecturer,
+        isCst,
+        isAlumni,
+        isFormerFaculty,
         triposPart: userSettings?.triposPart ?? null,
         coursesLectured,
         questionsAuthored,
