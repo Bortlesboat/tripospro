@@ -12,7 +12,7 @@ import {
   School,
   Star
 } from "lucide-react";
-import Image from "next/image";
+import { UserAvatar } from "@/components/user-avatar";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -114,22 +114,13 @@ const TopSection = ({
   crsid: string;
 }) => (
   <div className="flex items-start gap-4">
-    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg">
-      {profile.clerkUser?.imageUrl ? (
-        <Image
-          src={profile.clerkUser.imageUrl}
-          alt={crsid}
-          fill
-          className="object-cover"
-        />
-      ) : (
-        <div className="flex h-full w-full items-center justify-center bg-muted">
-          <span className="text-lg text-muted-foreground">
-            {crsid.slice(0, 2).toUpperCase()}
-          </span>
-        </div>
-      )}
-    </div>
+    <UserAvatar
+      imageUrl={profile.clerkUser?.imageUrl}
+      name={profile.clerkUser ? `${profile.clerkUser.firstName} ${profile.clerkUser.lastName}` : profile.name}
+      identifier={crsid}
+      className="h-20 w-20 rounded-lg text-2xl"
+      fallbackClassName="rounded-lg"
+    />
     <div className="flex flex-col gap-1">
       <div className="flex items-center gap-2">
         <h2 className="font-bold text-xl">
